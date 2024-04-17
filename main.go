@@ -26,12 +26,28 @@ var albums = []album{
 func main() {
 	router := gin.Default()
 	router.GET("/albums", getAlbums) // associate the GET method and the path with the handler
+	router.POST("/albums", postAlbums)
 
 	router.Run("localhost:8080") // attacuh the router to the http server
 }
 
 /* a handler to return all items */
-// responds with the list of all albums as JSON.
+// getAlbums() responds with the list of all albums as JSON.
 func getAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums) // seriarize the struct into JSON and add it to thre response. StatusOK means 200 OK
+}
+
+/* a handler to add a new item */
+// postAlbums adds an album from JSON received in the request body.
+func postAlbums(c *gin.Context) {
+	var newAlbum album
+
+	// Call BindJson to bind the received JSON to newAlbum.
+	if err := c.BindJSON(&newAlbum); err != nil {
+		return
+	}
+
+	// Add the new album to sth slice
+	albums = append(albums, newAlbum)
+	c.IndentedJSON(http.StatusCreated, newAlbum) // status code 201
 }
